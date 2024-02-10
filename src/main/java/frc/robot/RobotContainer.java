@@ -35,6 +35,7 @@ import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.IntakeShooter.IntakeShooterCommand;
+import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
@@ -139,7 +140,7 @@ public class RobotContainer {
     // reference for future command mapping
 
       dPadUp.whileTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPower(0.5)));
-      leftBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPosition(IntakeShooterConstants.kIntakePivotStowPosition)));
+      leftBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPosition(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotff)));
       rightBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakeShooterPower(0.5)));
 
 

@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.utils.MotorControlGroup;
 import frc.robot.subsystems.utils.SwerveUtils;
+import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeShooterConstants;
 
@@ -63,12 +64,14 @@ public class IntakeShooter extends SubsystemBase {
         intakePivotMotor.setPower(0);
     }
 
-    public void setIntakePivotPosition(double position) {
-        intakePivotMotor.setPosition((int)position, 0);
-    }
+    public void setIntakePivotPosition(IntakeShooterPositions position , double ff) {
+        
+        if (position == IntakeShooterPositions.ENGAGE) {
+            intakePivotMotor.setPosition(IntakeShooterConstants.kIntakePivotEngagePosition, ff);
+        } else if (position == IntakeShooterPositions.STOW) {
+            intakePivotMotor.setPosition(IntakeShooterConstants.kIntakePivotStowPosition, ff);
+        }
 
-    public void setIntakePivotPosition(double position , double ff) {
-        intakePivotMotor.setPosition(position, ff);
     }
 
     public void setIntakePivotBrakeMode(boolean brakeMode) {

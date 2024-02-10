@@ -5,10 +5,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
+import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.IntakeShooter.IntakeShooter;
 import frc.robot.subsystems.swerve.SwerveDrive;
 // import frc.robot.subsystems.swerve.DriveSpeed;
+import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 
 // import static frc.robot.Constants.DriveConstants.kMaxAngularSpeed;
 // import static frc.robot.Constants.DriveConstants.kMaxSpeedMetersPerSecond;
@@ -60,7 +62,12 @@ public class IntakeShooterCommand extends Command {
   }
 
   public Command stowIntakePivot(){
-    Command command = new InstantCommand(() -> m_IntakeShooter.setIntakePivotPosition(Constants.IntakeShooterConstants.kIntakePivotStowPosition), m_IntakeShooter);
+    Command command = new InstantCommand(() -> m_IntakeShooter.setIntakePivotPosition(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotff), m_IntakeShooter);
+    return command;
+  }
+
+  public Command engageIntakePivot(){
+    Command command = new InstantCommand(() -> m_IntakeShooter.setIntakePivotPosition(IntakeShooterPositions.ENGAGE, IntakeShooterConstants.kIntakePivotff), m_IntakeShooter);
     return command;
   }
 

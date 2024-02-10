@@ -218,6 +218,9 @@ public final class Constants {
     public static final int kIntakePivotMotor = 36; //TODO: Change this value
     
     public static double kIntakePivotStowPosition = 0;
+    public static double kIntakePivotEngagePosition = 0;
+
+    public static double kIntakePivotff = 0; //TODO: Change this value
 
   }
   public static final class ArmConstants{
