@@ -213,14 +213,19 @@ public final class Constants {
     
   }
   public static final class IntakeShooterConstants {
-    public static final int kIntakeShooterMotor1 = 34; //TODO: Change this value
-    public static final int kIntakeShooterMotor2 = 35; //TODO: Change this value
-    public static final int kIntakePivotMotor = 36; //TODO: Change this value
+    public static final int kIntakeShooterLowerMotor = 22; //TODO: Change this value
+    public static final int kIntakeShooterUpperMotor = 21; //TODO: Change this value
+    public static final int kIntakeShooterStowMotor = 20; //TODO: Change this value
+    public static final int kIntakePivotMotor = 23; //TODO: Change this value
     
     public static double kIntakePivotStowPosition = 0;
     public static double kIntakePivotEngagePosition = 0;
 
-    public static double kIntakePivotff = 0; //TODO: Change this value
+    public static double kIntakePivotP = 0.5;
+    public static double kIntakePivotI = 0.5;
+    public static double kIntakePivotD = 0.01;
+    public static double kIntakeUpperShooterP = 0.1;
+    public static double kIntakeLowerShooterP = 0.1;
 
   }
   public static final class ArmConstants{

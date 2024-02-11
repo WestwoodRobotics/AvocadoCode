@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -52,12 +53,17 @@ public class NeoTrajectory {
         addWaypoint(x, y, rotation);
     }
 
+
     public void addWaypoint(double x, double y) {
+
         Rotation2d rotation;
+        
         if (!currentWaypoints.isEmpty()) {
             Pose2d lastWaypoint = currentWaypoints.get(currentWaypoints.size() - 1);
             rotation = new Rotation2d(x - lastWaypoint.getTranslation().getX(), y - lastWaypoint.getTranslation().getY());
-            boolean newIsReversed = x < lastWaypoint.getTranslation().getX();
+            Translation2d currentWayPoint = new Translation2d(x, y);
+            Translation2d delta = currentWayPoint.minus(lastWaypoint.getTranslation()).rotateBy(rotation.unaryMinus());
+            boolean newIsReversed = delta.getX() < 0;
             if (newIsReversed != isReversed) {
                 isReversed = newIsReversed;
                 addNewConfig();
@@ -65,6 +71,7 @@ public class NeoTrajectory {
         } else {
             rotation = new Rotation2d(0);
         }
+
         addWaypoint(x, y, rotation);
         waypointGroups.add(currentWaypoints); // Update waypointGroups every time a waypoint is added
         currentWaypoints = new ArrayList<>(); // Clear currentWaypoints for the next group of waypoints
@@ -76,6 +83,8 @@ public class NeoTrajectory {
         currentWaypoints.add(waypoint);
         lastEnd = waypoint;
     }
+
+
 
     public List<Trajectory> generateTrajectories() {
         if (!currentWaypoints.isEmpty()) {

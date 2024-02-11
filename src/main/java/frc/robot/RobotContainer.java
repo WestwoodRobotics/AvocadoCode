@@ -22,7 +22,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.swerve.driveTrajectoryAuton;
 //import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.AutoConstants;
@@ -38,7 +41,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PortConstants;
-import frc.robot.commands.IntakeShooter.IntakeShooterCommand;
+import frc.robot.commands.IntakeShooter.IntakeShooterCommandFactory;
 import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
@@ -79,10 +82,14 @@ public class RobotContainer {
   
   // private final JoystickButton yButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
   private final JoystickButton aButton = new JoystickButton(m_driverController, XboxController.Button.kA.value);
+  private final JoystickButton bButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
+  private final JoystickButton yButton = new JoystickButton(m_driverController, XboxController.Button.kY.value);
+  private final JoystickButton xButton = new JoystickButton(m_driverController, XboxController.Button.kX.value);
   // private final JoystickButton bButton = new JoystickButton(m_driverController, XboxController.Button.kB.value);
   // private final JoystickButton xButton = new JoystickButton(m_driverController, XboxController.Button.kX.value);
 
   private final POVButton dPadUp = new POVButton(m_driverController, 0);
+  private final POVButton dPadDown = new POVButton(m_driverController, 180);
   // private final POVButton dPadRight = new POVButton(m_driverController, 90);
   // private final POVButton dPadDown = new POVButton(m_driverController, 180);
   // private final POVButton dPadLeft = new POVButton(m_driverController, 270);
@@ -91,6 +98,8 @@ public class RobotContainer {
   private final JoystickButton leftBumper = new JoystickButton(m_driverController, XboxController.Button.kLeftBumper.value);
 
   private driveTrajectoryAuton autonCommand;
+
+  private IntakeShooterCommandFactory intakeCommand;
 
 
 
@@ -105,7 +114,6 @@ public class RobotContainer {
    */
   public RobotContainer() {
     // Configure the button bindings
-    configureButtonBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     
     // Configure default commands 
@@ -113,7 +121,8 @@ public class RobotContainer {
     //test.setDefaultCommand(new testCommand(test, m_driverController));
 
     autonCommand = new driveTrajectoryAuton(m_robotDrive);
-
+    intakeCommand = new IntakeShooterCommandFactory(m_intakeShooter);
+    configureButtonBindings();
     // m_intakeModule.setDefaultCommand(new IntakeCommand(m_intakeModule, m_driverController, m_operatorController));
     // m_elevatorModule.setDefaultCommand(new ElevatorCommand(m_elevatorModule, m_driverController, m_operatorController));
     // m_wristModule.setDefaultCommand(new WristCommand(m_wristModule, m_driverController, m_operatorController));
@@ -137,15 +146,40 @@ public class RobotContainer {
             m_robotDrive));*/
    
     // review button mapping
+
     aButton.whileTrue(new InstantCommand(
             () -> m_robotDrive.resetGyro(),
             m_robotDrive));
 
     // reference for future command mapping
+      //m_intakeShooter.setDefaultCommand(new InstantCommand(() -> m_intakeShooter.setIntakePivotPower(0)));
+      Command stopPivotCommand = intakeCommand.manualPivot(0);
+      Command upPivotManual = intakeCommand.manualPivot(0.2);
+      Command downPivotManual = intakeCommand.manualPivot(-0.2);
+      Command pivot1Pos = intakeCommand.setPivotPosition(2);
+      Command pivot2Pos = intakeCommand.setPivotPosition(5);
+      Command pivotReset = intakeCommand.resetPivotPosition();
+      
+      dPadUp.onTrue(upPivotManual).onFalse(stopPivotCommand);
+      dPadDown.onTrue(downPivotManual).onFalse(stopPivotCommand);
+      bButton.onTrue(pivot1Pos);
+      yButton.onTrue(pivot2Pos);
+      xButton.onTrue(pivotReset);
 
-      dPadUp.whileTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPower(0.5)));
-      leftBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPosition(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotff)));
-      rightBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakeShooterPower(0.5)));
+      // leftBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPosition(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotff)));
+      Command stopShooterCommand = intakeCommand.stopIntake();
+
+      rightBumper.onTrue(
+        new InstantCommand(() -> m_intakeShooter.shoot())
+      ).onFalse(stopShooterCommand);
+      leftBumper.onTrue(
+        new InstantCommand(() -> m_intakeShooter.intake())
+      ).onFalse(stopShooterCommand);
+      Trigger rightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.75);
+      rightTrigger.onTrue(
+        new InstantCommand(() -> m_intakeShooter.spinUp())
+      ).onFalse(stopShooterCommand);
+      
 
 
     // dPadDown.whileTrue(new InstantCommand(() -> m_elevatorModule.setElevatorPower(0.25)));
