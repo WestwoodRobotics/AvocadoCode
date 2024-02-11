@@ -42,7 +42,6 @@ import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.IntakeShooter.IntakeShooterCommandFactory;
-import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
@@ -53,7 +52,9 @@ import frc.robot.subsystems.IntakeShooter.IntakeShooter;
 //import frc.robot.subsystems.elevator.ElevatorModule;
 //import frc.robot.subsystems.intake.IntakeModule;
 import frc.robot.subsystems.swerve.SwerveDrive;
+import frc.robot.subsystems.utils.IntakeShooterState;
 //import frc.robot.subsystems.wrist.WristModule;
+import frc.robot.subsystems.utils.Enums.Position_Enums.IntakeShooterPositions;
 
 
 
@@ -153,11 +154,14 @@ public class RobotContainer {
 
     // reference for future command mapping
       //m_intakeShooter.setDefaultCommand(new InstantCommand(() -> m_intakeShooter.setIntakePivotPower(0)));
+      Command rampUpShooterMotorsCommand = intakeCommand.setShooterRPM(5000, 30);
+      Command stowShootCommand = intakeCommand.launchStowMotorShoot();
+      Command inititateIntakeCommand  = intakeCommand.inititateIntake();
       Command stopPivotCommand = intakeCommand.manualPivot(0);
       Command upPivotManual = intakeCommand.manualPivot(0.2);
       Command downPivotManual = intakeCommand.manualPivot(-0.2);
-      Command pivot1Pos = intakeCommand.setPivotPosition(2);
-      Command pivot2Pos = intakeCommand.setPivotPosition(5);
+      Command pivot1Pos = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.STOW));
+      Command pivot2Pos = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.SHOOT));
       Command pivotReset = intakeCommand.resetPivotPosition();
       
       dPadUp.onTrue(upPivotManual).onFalse(stopPivotCommand);
@@ -170,14 +174,15 @@ public class RobotContainer {
       Command stopShooterCommand = intakeCommand.stopIntake();
 
       rightBumper.onTrue(
-        new InstantCommand(() -> m_intakeShooter.shoot())
+        stowShootCommand
       ).onFalse(stopShooterCommand);
       leftBumper.onTrue(
-        new InstantCommand(() -> m_intakeShooter.intake())
+        inititateIntakeCommand
       ).onFalse(stopShooterCommand);
+      
       Trigger rightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.75);
       rightTrigger.onTrue(
-        new InstantCommand(() -> m_intakeShooter.spinUp())
+        rampUpShooterMotorsCommand
       ).onFalse(stopShooterCommand);
       
 

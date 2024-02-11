@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.utils.IntakeShooterState;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -217,16 +218,28 @@ public final class Constants {
     public static final int kIntakeShooterUpperMotor = 21; //TODO: Change this value
     public static final int kIntakeShooterStowMotor = 20; //TODO: Change this value
     public static final int kIntakePivotMotor = 23; //TODO: Change this value
+
+    
+    public static final double kStowPosition = 2;
+    public static final double kIntakePosition = 1; //TODO: Change this value
+    public static final double kShootPosition = 5;
     
     public static double kIntakePivotStowPosition = 0;
     public static double kIntakePivotEngagePosition = 0;
 
+
+
     public static double kIntakePivotP = 0.5;
     public static double kIntakePivotI = 0.5;
     public static double kIntakePivotD = 0.01;
-    public static double kIntakeUpperShooterP = 0.1;
-    public static double kIntakeLowerShooterP = 0.1;
 
+    public static double kIntakeUpperShooterP = 0.1;
+    public static double kIntakeUpperShooterI = 0.1;
+    public static double kIntakeUpperShooterD = 0.01;
+
+    public static double kIntakeLowerShooterP = 0.1;
+    public static double kIntakeLowerShooterI = 0.1;
+    public static double kIntakeLowerShooterD = 0.01;
   }
   public static final class ArmConstants{
     public static final int kArmMotor = 21;

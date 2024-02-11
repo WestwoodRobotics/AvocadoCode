@@ -9,8 +9,8 @@ import frc.robot.Constants.IntakeShooterConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.IntakeShooter.IntakeShooter;
 import frc.robot.subsystems.swerve.SwerveDrive;
-// import frc.robot.subsystems.swerve.DriveSpeed;
-import frc.robot.subsystems.utils.Position_Enums.IntakeShooterPositions;
+import frc.robot.subsystems.utils.IntakeShooterState;
+import frc.robot.subsystems.utils.Enums.Position_Enums.IntakeShooterPositions;
 
 // import static frc.robot.Constants.DriveConstants.kMaxAngularSpeed;
 // import static frc.robot.Constants.DriveConstants.kMaxSpeedMetersPerSecond;
@@ -23,9 +23,14 @@ public class IntakeShooterCommandFactory {
     this.m_IntakeShooter = m_IntakeShooter;
   }
 
-  public Command setIntakeShooterPower(double power) {
-    Command command = new InstantCommand (() -> m_IntakeShooter.setIntakeShooterPower(power), m_IntakeShooter);
-    return command;
+  public Command setIntakeShooterPower(double power) throws IllegalStateException{
+    if (m_IntakeShooter.getState().getPosition() == (IntakeShooterPositions.STOW)) {
+      double clampedPower = MathUtil.clamp(power, -0.5, 0.5);
+      Command command = new InstantCommand (() -> m_IntakeShooter.setIntakeShooterPower(clampedPower), m_IntakeShooter);
+      return command;
+    } else {
+      throw new IllegalStateException("Intake Shooter must be in stow position to run the intake shooter");
+    }
   }
 
   public Command setIntakePivotPower(double power) {
@@ -44,9 +49,18 @@ public class IntakeShooterCommandFactory {
     return command;
   }
 
+  public Command stopShooter(){
+    Command command = new InstantCommand (() -> m_IntakeShooter.stopShooter(), m_IntakeShooter);
+    return command;
+  }
+
   private void manualPivotImpl(double power) {
     this.m_IntakeShooter.setIntakePivotPower(power);
     this.m_IntakeShooter.setPivotPIDEnabled(false);
+    if ((m_IntakeShooter.isStalling())){
+      m_IntakeShooter.setZeroPoint();
+      m_IntakeShooter.stopPivotMotorPower(); 
+    }
   }
 
   public Command manualPivot(double power) {
@@ -58,12 +72,46 @@ public class IntakeShooterCommandFactory {
   private void setPivotPositionImpl(double position) {
     this.m_IntakeShooter.setIntakePivotPosition(position);
     this.m_IntakeShooter.setPivotPIDEnabled(true);
+    if ((position == IntakeShooterConstants.kIntakePosition) && (m_IntakeShooter.isStalling())){
+      m_IntakeShooter.setZeroPoint();
+      m_IntakeShooter.stopPivotMotorPower(); 
+    }
   }
 
-  public Command setPivotPosition(double position) {
-    InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(position));
-    command.addRequirements(this.m_IntakeShooter);
-    return command;
+  public Command setPivotPosition(IntakeShooterState state) {
+    if (state.getPosition() == IntakeShooterPositions.STOW) {
+      InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kStowPosition));
+      command.addRequirements(this.m_IntakeShooter);
+      return command;
+    } else if (state.getPosition() == IntakeShooterPositions.INTAKE) {
+      InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kIntakePosition));
+      command.addRequirements(this.m_IntakeShooter);
+      return command;
+    } else if (state.getPosition() == IntakeShooterPositions.SHOOT) {
+      InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kShootPosition));
+      command.addRequirements(this.m_IntakeShooter);
+      return command;
+    }
+    else{
+      System.out.println("Invalid intake shooter position");
+      return null;
+    }
+  }
+
+  private void setShooterRPMImpl(double upperRPM, double lowerRPM) {
+    this.m_IntakeShooter.setShooterRPM(upperRPM, lowerRPM);
+    this.m_IntakeShooter.setShooterPIDEnabled(true);
+  }
+
+  public Command setShooterRPM(double upperRPM, double lowerRPM) {
+    if (m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOT) {
+      InstantCommand command = new InstantCommand(() -> setShooterRPMImpl(upperRPM, lowerRPM));
+      command.addRequirements(this.m_IntakeShooter);
+      return command;
+    } else {
+      System.out.println("Intake Shooter must be in shoot position to run the shooter");
+      return null;
+    }
   }
 
   private void resetPivotPositionImpl() {
@@ -74,6 +122,40 @@ public class IntakeShooterCommandFactory {
     InstantCommand command = new InstantCommand(() -> resetPivotPositionImpl());
     command.addRequirements(this.m_IntakeShooter);
     return command;
+  }
+
+  public void intakeImpl(){
+    this.m_IntakeShooter.setIntakeShooterPower(-0.5);
+    this.m_IntakeShooter.setIntakeStowPower(-0.5);
+  }
+
+  public Command inititateIntake(){
+
+    if (m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.INTAKE){
+      InstantCommand command = new InstantCommand(() -> intakeImpl());
+      command.addRequirements(this.m_IntakeShooter);
+      return command;
+    } else {
+      System.out.println("Intake Shooter must be in intake position to run the intake");
+      return null;
+    }
+
+  }
+
+  public void launchStowMotorShootImpl(){
+    this.m_IntakeShooter.setIntakeStowPower(1.0);
+  }
+
+  public Command launchStowMotorShoot(){
+    if (m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOT){
+      InstantCommand command = new InstantCommand(() -> launchStowMotorShootImpl());
+      command.addRequirements(this.m_IntakeShooter);
+      return command;
+    } else {
+      System.out.println("Intake Shooter must be in shoot position to run the stow motor");
+      return null;
+    }
+
   }
   
   // public Command stopIntakeShooter(){
