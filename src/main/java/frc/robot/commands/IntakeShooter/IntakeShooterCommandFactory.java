@@ -23,13 +23,14 @@ public class IntakeShooterCommandFactory {
     this.m_IntakeShooter = m_IntakeShooter;
   }
 
-  public Command setIntakeShooterPower(double power) throws IllegalStateException{
+  public Command setIntakeShooterPower(double power){
     if (m_IntakeShooter.getState().getPosition() == (IntakeShooterPositions.STOW)) {
       double clampedPower = MathUtil.clamp(power, -0.5, 0.5);
       Command command = new InstantCommand (() -> m_IntakeShooter.setIntakeShooterPower(clampedPower), m_IntakeShooter);
       return command;
     } else {
-      throw new IllegalStateException("Intake Shooter must be in stow position to run the intake shooter");
+      System.out.println("Intake Shooter must be in stow position to run the intake shooter");
+      return new InstantCommand();
     }
   }
 
@@ -94,7 +95,7 @@ public class IntakeShooterCommandFactory {
     }
     else{
       System.out.println("Invalid intake shooter position");
-      return null;
+      return new InstantCommand();
     }
   }
 
@@ -110,7 +111,7 @@ public class IntakeShooterCommandFactory {
       return command;
     } else {
       System.out.println("Intake Shooter must be in shoot position to run the shooter");
-      return null;
+      return new InstantCommand();
     }
   }
 
@@ -137,7 +138,7 @@ public class IntakeShooterCommandFactory {
       return command;
     } else {
       System.out.println("Intake Shooter must be in intake position to run the intake");
-      return null;
+      return new InstantCommand();
     }
 
   }
@@ -153,7 +154,7 @@ public class IntakeShooterCommandFactory {
       return command;
     } else {
       System.out.println("Intake Shooter must be in shoot position to run the stow motor");
-      return null;
+      return new InstantCommand();
     }
 
   }
