@@ -9,15 +9,15 @@ public class IntakeShooterState {
         this.intakeShooterPosition = IntakeShooterPositions.STOW;
     }
 
-    public IntakeShooterState(IntakeShooterPositions s){
-        this.intakeShooterPosition = s;
+    public IntakeShooterState(IntakeShooterPositions intakeShooterStartingPosition) {
+        this.intakeShooterPosition = intakeShooterStartingPosition;
     }
     
     public IntakeShooterPositions getPosition(){
         return intakeShooterPosition;
     }
 
-    public void setState(IntakeShooterPositions intakeShooterPosition){
+    public void setPosition(IntakeShooterPositions intakeShooterPosition){
         this.intakeShooterPosition = intakeShooterPosition;
     }
 

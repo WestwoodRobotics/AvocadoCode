@@ -57,7 +57,7 @@ public class IntakeShooter extends SubsystemBase {
     private int currentPivotCurrentIdx;
 
     private boolean pivotPIDEnabled;
-    private boolean shooterPIDEnabled;
+    private static boolean shooterPIDEnabled;
 
     private static IntakeShooterState intakeShooterState;
     
@@ -106,7 +106,7 @@ public class IntakeShooter extends SubsystemBase {
 
         currentPivotCurrentIdx = 0;
 
-        IntakeShooter.intakeShooterState = new IntakeShooterState(IntakeShooterPositions.STOW);
+        IntakeShooter.intakeShooterState = new IntakeShooterState();
 
     }
 
@@ -119,41 +119,14 @@ public class IntakeShooter extends SubsystemBase {
         stowMotor.set(power);
     }
 
-    public void intake() {
-        lowerShooterMotor.set(-0.5);
-        upperShooterMotor.set(-0.5);
-        stowMotor.set(-0.5);
-    }
-
-    public void outtake() {
-        lowerShooterMotor.set(0.5);
-        upperShooterMotor.set(0.5);
-        stowMotor.set(0.5);
-    }
-
-    public void spinUp() {
-        lowerShooterMotor.set(1.0);
-        upperShooterMotor.set(1.0);
-    }
-
     public void setShooterRPM(double upperRPM, double lowerRPM) {
         this.targetUpperShooterRPM = upperRPM;
         this.targetLowerShooterRPM = lowerRPM;
-        this.shooterPIDEnabled = true;
+        IntakeShooter.shooterPIDEnabled = true;
     }
 
     public void setShooterPIDEnabled(boolean enabled) {
-        this.shooterPIDEnabled = enabled;
-    }
-
-    public void shoot() {
-        // add check for shooter rpm
-        if (upperShooterMotor.getEncoder().getVelocity() >= targetUpperShooterRPM && lowerShooterMotor.getEncoder().getVelocity() >= targetLowerShooterRPM) {
-            lowerShooterMotor.set(1.0);
-            upperShooterMotor.set(1.0);
-        }
-        
-        stowMotor.set(1.0);
+        IntakeShooter.shooterPIDEnabled = enabled;
     }
 
     public void setIntakePivotPower(double power) {
@@ -221,13 +194,13 @@ public class IntakeShooter extends SubsystemBase {
         SmartDashboard.putBoolean("Pivot Stall", this.isStalling());
         
 
-        if (intakeShooterState.equals(new IntakeShooterState(IntakeShooterPositions.INTAKE))){
+        if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.INTAKE)).getPosition()){
             SmartDashboard.putString("State:", "Intake");
         }
-        else if (intakeShooterState.equals(new IntakeShooterState(IntakeShooterPositions.SHOOT))){
+        else if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.SHOOT)).getPosition()){
             SmartDashboard.putString("State:", "Shoot");
         }
-        else if (intakeShooterState.equals(new IntakeShooterState(IntakeShooterPositions.STOW))){
+        else if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.STOW)).getPosition()){
             SmartDashboard.putString("State:", "Stow");
         }
         
@@ -272,7 +245,7 @@ public class IntakeShooter extends SubsystemBase {
         pivotMotor.getEncoder().setPosition(0);
     }
 
-    public void stopPivotMotorPower(){
-        pivotMotor.set(0);
+    public double getPosition(){
+        return pivotMotor.getEncoder().getPosition();
     }
 }

@@ -155,10 +155,9 @@ public class RobotContainer {
 
     // reference for future command mapping
       //m_intakeShooter.setDefaultCommand(new InstantCommand(() -> m_intakeShooter.setIntakePivotPower(0)));
-      Command rampUpShooterMotorsCommand = intakeCommand.setShooterRPM(2000, 25);
       Command stowShootCommand = intakeCommand.launchStowMotorShoot();
       Command inititateIntakeCommand  = intakeCommand.inititateIntake();
-      Command stopPivotCommand = intakeCommand.manualPivot(0);
+      Command holdPivotCommand = intakeCommand.holdIntakeShooter();
       Command shooterStop = intakeCommand.stopShooter();
       Command shooterCommand = new IntakeShooterPIDCommand(m_intakeShooter, 25, 5000);
       Command shooterCommand1 = new IntakeShooterPIDCommand(m_intakeShooter, 0, 0);
@@ -167,11 +166,10 @@ public class RobotContainer {
       Command pivot1Pos = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.INTAKE));
       Command pivot2Pos = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.STOW));
       Command pivot3Pos = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.SHOOT));
-      Command pivotReset = intakeCommand.resetPivotPosition();
       Command powerControl1 = intakeCommand.setShooterPower(1.0);
       
-      dPadUp.onTrue(upPivotManual).onFalse(stopPivotCommand);
-      dPadDown.onTrue(downPivotManual).onFalse(stopPivotCommand);
+      dPadUp.onTrue(upPivotManual).onFalse(holdPivotCommand);
+      dPadDown.onTrue(downPivotManual).onFalse(holdPivotCommand);
       bButton.onTrue(pivot1Pos);
       yButton.onTrue(pivot2Pos);
       

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.IntakeShooter.IntakeShooter;
+import frc.robot.subsystems.utils.Enums.Position_Enums.IntakeShooterPositions;
 
 public class IntakeShooterPIDCommand extends Command {
 
@@ -17,11 +18,9 @@ public class IntakeShooterPIDCommand extends Command {
     private  final IntakeShooter m_IntakeShooter;
     public IntakeShooterPIDCommand(IntakeShooter m_IntakeShooter, double upperRPM, double lowerRPM) {
         this.m_IntakeShooter = m_IntakeShooter;
+        this.upperRPM = upperRPM;
+        this.lowerRPM = lowerRPM;
     }
-
-    
-
-    
 
     private void setShooterRPM(double upperRPM, double lowerRPM) 
     {   
@@ -30,19 +29,17 @@ public class IntakeShooterPIDCommand extends Command {
         
     }
 
-
-    
-  @Override
-  public void initialize() 
-  {
-    
-  }
+    @Override
+    public void initialize() 
+    {
+        
+    }
 
   @Override
     public void execute() {
-
-        setShooterRPM(upperRPM, lowerRPM);
-
+        if (m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOT) {
+            setShooterRPM(upperRPM, lowerRPM);
+        }
     }
 
   @Override
