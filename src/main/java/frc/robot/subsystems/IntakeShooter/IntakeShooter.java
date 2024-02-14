@@ -59,9 +59,11 @@ public class IntakeShooter extends SubsystemBase {
     private boolean pivotPIDEnabled;
     private boolean shooterPIDEnabled;
 
-    private IntakeShooterState intakeShooterState;
+    private static IntakeShooterState intakeShooterState;
+    
 
     public IntakeShooter() {
+
 
         pivotMotor = new CANSparkMax(IntakeShooterConstants.kIntakePivotMotor, MotorType.kBrushless);
         lowerShooterMotor = new CANSparkMax(IntakeShooterConstants.kIntakeShooterLowerMotor, MotorType.kBrushless);
@@ -104,7 +106,7 @@ public class IntakeShooter extends SubsystemBase {
 
         currentPivotCurrentIdx = 0;
 
-        this.intakeShooterState = new IntakeShooterState(IntakeShooterPositions.STOW);
+        IntakeShooter.intakeShooterState = new IntakeShooterState(IntakeShooterPositions.STOW);
 
     }
 
@@ -170,6 +172,8 @@ public class IntakeShooter extends SubsystemBase {
         pivotMotor.getEncoder().setPosition(0);
     }
 
+
+
     // public void setIntakePivotPosition(IntakeShooterPositions position , double ff) {
         
     //     if (position == IntakeShooterPositions.ENGAGE) {
@@ -215,6 +219,18 @@ public class IntakeShooter extends SubsystemBase {
         SmartDashboard.putNumber("Lower Shooter RPM", lowerShooterMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Pivot Current", getAveragePivotCurrent());
         SmartDashboard.putBoolean("Pivot Stall", this.isStalling());
+        
+
+        if (intakeShooterState.equals(new IntakeShooterState(IntakeShooterPositions.INTAKE))){
+            SmartDashboard.putString("State:", "Intake");
+        }
+        else if (intakeShooterState.equals(new IntakeShooterState(IntakeShooterPositions.SHOOT))){
+            SmartDashboard.putString("State:", "Shoot");
+        }
+        else if (intakeShooterState.equals(new IntakeShooterState(IntakeShooterPositions.STOW))){
+            SmartDashboard.putString("State:", "Stow");
+        }
+        
 
         updatePivotAverage();
 
@@ -243,7 +259,7 @@ public class IntakeShooter extends SubsystemBase {
     }
 
     public void setIntakeShooterState(IntakeShooterState intakeShooterState) {
-        this.intakeShooterState = intakeShooterState;
+        IntakeShooter.intakeShooterState = intakeShooterState;
     }
 
     public void stopShooter(){

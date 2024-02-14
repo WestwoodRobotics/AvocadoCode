@@ -5,8 +5,12 @@ import frc.robot.subsystems.utils.Enums.Position_Enums.IntakeShooterPositions;
 public class IntakeShooterState {
     IntakeShooterPositions intakeShooterPosition;
 
-    public IntakeShooterState(IntakeShooterPositions stow) {
-        this.intakeShooterPosition = stow;
+    public IntakeShooterState() {
+        this.intakeShooterPosition = IntakeShooterPositions.STOW;
+    }
+
+    public IntakeShooterState(IntakeShooterPositions s){
+        this.intakeShooterPosition = s;
     }
     
     public IntakeShooterPositions getPosition(){

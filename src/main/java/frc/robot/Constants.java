@@ -48,6 +48,8 @@ public final class Constants {
         new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
         new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
+
+
     // Angular offsets of the modules relative to the chassis in radians
     // These values are the angle offset of the wheels when the robot is facing forwards (Absolute Encoders)
     //DO NOT CHANGE THESE VALUES UNLESS YOU KNOW WHAT YOU'RE DOING!!
@@ -222,7 +224,7 @@ public final class Constants {
     
     public static final double kStowPosition = 2;
     public static final double kIntakePosition = 1; //TODO: Change this value
-    public static final double kShootPosition = 5;
+    public static final double kShootPosition = -1;
     
     public static double kIntakePivotStowPosition = 0;
     public static double kIntakePivotEngagePosition = 0;
@@ -233,13 +235,13 @@ public final class Constants {
     public static double kIntakePivotI = 0.5;
     public static double kIntakePivotD = 0.01;
 
-    public static double kIntakeUpperShooterP = 0.1;
-    public static double kIntakeUpperShooterI = 0.1;
-    public static double kIntakeUpperShooterD = 0.01;
+    public static double kIntakeUpperShooterP = 100;
+    public static double kIntakeUpperShooterI = 0;
+    public static double kIntakeUpperShooterD = 0;
 
-    public static double kIntakeLowerShooterP = 0.1;
+    public static double kIntakeLowerShooterP = 10;
     public static double kIntakeLowerShooterI = 0.1;
-    public static double kIntakeLowerShooterD = 0.01;
+    public static double kIntakeLowerShooterD = 1;
   }
   public static final class ArmConstants{
     public static final int kArmMotor = 21;
