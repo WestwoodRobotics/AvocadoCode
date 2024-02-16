@@ -43,6 +43,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.commands.IntakeShooter.IntakeShooterCommandFactory;
 import frc.robot.commands.IntakeShooter.IntakeShooterPIDCommand;
+import frc.robot.commands.Vision.LEDCommand;
 //import frc.robot.commands.Intake.IntakeCommand;
 //import frc.robot.commands.elevator.ElevatorCommand;
 //import frc.robot.commands.elevator.ElevatorPosSet;
@@ -56,6 +57,7 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.utils.IntakeShooterState;
 //import frc.robot.subsystems.wrist.WristModule;
 import frc.robot.subsystems.utils.Enums.Position_Enums.IntakeShooterPositions;
+import frc.robot.subsystems.vision.*;
 
 
 
@@ -69,6 +71,8 @@ public class RobotContainer {
   // The robot's subsystems
   private final SwerveDrive m_robotDrive = new SwerveDrive();
   private final IntakeShooter m_intakeShooter = new IntakeShooter();
+  private LED led = new LED(0);
+  private BeamBreak beamBreak = new BeamBreak(1);
   //private final Test test = new Test();
 
   // LED for indicating robot state, not implemented in hardware.
@@ -120,6 +124,8 @@ public class RobotContainer {
     
     // Configure default commands 
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
+    led.setDefaultCommand(new LEDCommand(led, beamBreak));
+
     //test.setDefaultCommand(new testCommand(test, m_driverController));
 
     autonCommand = new driveTrajectoryAuton(m_robotDrive);
@@ -163,17 +169,17 @@ public class RobotContainer {
       Command shooterCommand1 = new IntakeShooterPIDCommand(m_intakeShooter, 0, 0);
       Command upPivotManual = intakeCommand.manualPivot(0.2);
       Command downPivotManual = intakeCommand.manualPivot(-0.2);
-      Command pivot1Pos = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.INTAKE));
-      Command pivot2Pos = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.STOW));
-      Command pivot3Pos = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.SHOOT));
+      Command IntakePosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.INTAKE));
+      Command StowPosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.STOW));
+      Command ShootPosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.SHOOT));
       Command powerControl1 = intakeCommand.setShooterPower(1.0);
       
       dPadUp.onTrue(upPivotManual).onFalse(holdPivotCommand);
       dPadDown.onTrue(downPivotManual).onFalse(holdPivotCommand);
-      bButton.onTrue(pivot1Pos);
-      yButton.onTrue(pivot2Pos);
-      
-      xButton.onTrue(pivot3Pos);
+
+      bButton.onTrue(IntakePosition);
+      yButton.onTrue(StowPosition);
+      xButton.onTrue(ShootPosition);
 
       // leftBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPosition(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotff)));
       Command stopShooterCommand = intakeCommand.stopIntake();
@@ -183,12 +189,12 @@ public class RobotContainer {
       ).onFalse(shooterStop);
       leftBumper.onTrue(
         inititateIntakeCommand
-      ).onFalse(shooterStop);
+      );//.onFalse(shooterStop);
       
       Trigger rightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.75);
       rightTrigger.onTrue(
-        shooterCommand
-      ).onFalse(stopShooterCommand);
+        powerControl1
+      );//.onFalse(stopShooterCommand);
       
 
 

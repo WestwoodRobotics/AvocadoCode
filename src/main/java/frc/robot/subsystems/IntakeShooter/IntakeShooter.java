@@ -192,6 +192,7 @@ public class IntakeShooter extends SubsystemBase {
         SmartDashboard.putNumber("Lower Shooter RPM", lowerShooterMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Pivot Current", getAveragePivotCurrent());
         SmartDashboard.putBoolean("Pivot Stall", this.isStalling());
+        SmartDashboard.putNumber("Position Num:", this.getPosition());
         
 
         if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.INTAKE)).getPosition()){
@@ -247,5 +248,9 @@ public class IntakeShooter extends SubsystemBase {
 
     public double getPosition(){
         return pivotMotor.getEncoder().getPosition();
+    }
+    
+    public void stopPivotMotorPower(){
+        pivotMotor.set(0);
     }
 }

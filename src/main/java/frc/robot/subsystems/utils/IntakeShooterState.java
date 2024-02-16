@@ -14,7 +14,7 @@ public class IntakeShooterState {
     }
     
     public IntakeShooterPositions getPosition(){
-        return intakeShooterPosition;
+        return this.intakeShooterPosition;
     }
 
     public void setPosition(IntakeShooterPositions intakeShooterPosition){
