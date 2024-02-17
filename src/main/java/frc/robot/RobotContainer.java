@@ -71,8 +71,10 @@ public class RobotContainer {
   // The robot's subsystems
   private final SwerveDrive m_robotDrive = new SwerveDrive();
   private final IntakeShooter m_intakeShooter = new IntakeShooter();
+  
   private LED led = new LED(0);
-  private BeamBreak beamBreak = new BeamBreak(1);
+  private BeamBreak beamBreak = new BeamBreak(9);
+
   //private final Test test = new Test();
 
   // LED for indicating robot state, not implemented in hardware.

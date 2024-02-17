@@ -27,6 +27,7 @@ public class IntakeShooterCommandFactory {
   }
 
   public Command setIntakeShooterPower(double power){
+
     if (m_IntakeShooter.getState().getPosition() == (IntakeShooterPositions.STOW)){
       double clampedPower = MathUtil.clamp(power, -0.5, 0.5);
       Command command = new InstantCommand (() -> m_IntakeShooter.setIntakeShooterPower(clampedPower), m_IntakeShooter);
@@ -35,6 +36,7 @@ public class IntakeShooterCommandFactory {
       System.out.println("Intake Shooter must be in stow position to run the intake shooter");
       return new InstantCommand();
     }
+    
   }
 
   public void holdIntakeShooterImpl(){

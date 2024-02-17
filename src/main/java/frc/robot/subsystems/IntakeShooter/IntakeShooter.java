@@ -205,6 +205,7 @@ public class IntakeShooter extends SubsystemBase {
             SmartDashboard.putString("State:", "Stow");
         }
         
+        
 
         updatePivotAverage();
 
@@ -219,7 +220,7 @@ public class IntakeShooter extends SubsystemBase {
             pivotMotor.set(pivotControl);
         }
 
-        if (this.shooterPIDEnabled) {
+        if (IntakeShooter.shooterPIDEnabled) {
             double upperShooterControl = upperShooterController.calculate(upperShooterMotor.getEncoder().getVelocity(), targetUpperShooterRPM);
             double lowerShooterControl = lowerShooterController.calculate(lowerShooterMotor.getEncoder().getVelocity(), targetLowerShooterRPM);
             upperShooterMotor.set(upperShooterControl);

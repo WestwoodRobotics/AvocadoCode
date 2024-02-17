@@ -1,7 +1,7 @@
 package frc.robot.commands.Vision;
 
 import frc.robot.subsystems.vision.*;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class LEDCommand extends Command {
@@ -22,6 +22,7 @@ public class LEDCommand extends Command {
         } else {
             led.setLights(0.61);
         }
+        SmartDashboard.putBoolean("b", b.getStatus());
     }
     
 }
