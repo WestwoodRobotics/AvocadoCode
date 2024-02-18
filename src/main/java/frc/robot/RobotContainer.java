@@ -232,7 +232,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
+    PathPlannerPath path = PathPlannerPath.fromPathFile("ExamplePath");
     return AutoBuilder.followPath(path);
     //return autonCommand.getAutonomousCommand();
   }
