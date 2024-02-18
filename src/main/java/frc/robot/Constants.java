@@ -53,10 +53,10 @@ public final class Constants {
     // Angular offsets of the modules relative to the chassis in radians
     // These values are the angle offset of the wheels when the robot is facing forwards (Absolute Encoders)
     //DO NOT CHANGE THESE VALUES UNLESS YOU KNOW WHAT YOU'RE DOING!!
-    public static final double kFrontLeftChassisAngularOffset = 0;
+    public static final double kFrontLeftChassisAngularOffset = Math.PI/2;
     public static final double kFrontRightChassisAngularOffset = 0;
-    public static final double kRearLeftChassisAngularOffset = 0;
-    public static final double kRearRightChassisAngularOffset = 0;
+    public static final double kRearLeftChassisAngularOffset = Math.PI;
+    public static final double kRearRightChassisAngularOffset = Math.PI/2;
 
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 11;
@@ -64,10 +64,10 @@ public final class Constants {
     public static final int kFrontRightDrivingCanId = 13;
     public static final int kRearRightDrivingCanId = 15;
 
-    public static final int kFrontLeftTurningCanId = 10;
+    public static final int kFrontLeftTurningCanId = 14;
     public static final int kRearLeftTurningCanId = 16;
     public static final int kFrontRightTurningCanId = 12;
-    public static final int kRearRightTurningCanId = 14;
+    public static final int kRearRightTurningCanId = 10;
 
     public static final boolean kGyroReversed = false;
 
@@ -81,10 +81,10 @@ public final class Constants {
         public static final int kFrontRightDrivingCanId = 15;
         public static final int kRearRightDrivingCanId = 17;
     
-        public static final int kFrontLeftTurningCanId = 10;
-        public static final int kRearLeftTurningCanId = 12;
-        public static final int kFrontRightTurningCanId = 14;
-        public static final int kRearRightTurningCanId = 16;
+        public static final int kFrontLeftTurningCanId = 14;
+        public static final int kRearLeftTurningCanId = 16;
+        public static final int kFrontRightTurningCanId = 12;
+        public static final int kRearRightTurningCanId = 10;
         
 
         public static final int kElevatorMotor1Port = 20; 

@@ -101,24 +101,32 @@ public class IntakeShooterCommandFactory {
   }
 
   public Command setPivotPosition(IntakeShooterState targetState) {
-    if ((targetState.getPosition() == IntakeShooterPositions.STOW)) {
-      InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kStowPosition));
-      command.addRequirements(this.m_IntakeShooter);
-      m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.INTAKE));
-      return command;
-    } else if ((targetState.getPosition() == IntakeShooterPositions.INTAKE)) {
-      InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kIntakePosition));
-      command.addRequirements(this.m_IntakeShooter);
-      m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.SHOOT));
-      return command;
-    } else if ((targetState.getPosition() == IntakeShooterPositions.SHOOT)) {
-      InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kShootPosition));
-      command.addRequirements(this.m_IntakeShooter);
-      m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.STOW));
-      return command;
+    switch(targetState.getPosition()) {
+      case STOW:
+      {
+        InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kStowPosition));
+        command.addRequirements(this.m_IntakeShooter);
+        m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.STOW));
+        return command;
+      }
+      case INTAKE:
+      {
+        InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kIntakePosition));
+        command.addRequirements(this.m_IntakeShooter);
+        m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.INTAKE));
+        return command;
+      }
+      case SHOOT:
+      {
+        InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kShootPosition));
+        command.addRequirements(this.m_IntakeShooter);
+        m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.SHOOT));
+        return command;
+      }
+      default:
+          throw new RuntimeException(); //Will never get to this point because we're using Enums.
+                                        //Errors will be caught at compile time.
     }
-    throw new RuntimeException(); //Will never get to this point because we're using Enums.
-                                  //Errors will be caught at compile time.
   }
 
   private void setShooterRPMImpl(double upperRPM, double lowerRPM) {

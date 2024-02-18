@@ -42,8 +42,6 @@ import frc.robot.Constants.IntakeShooterConstants;
 public class IntakeShooter extends SubsystemBase {
     private static final int PIVOT_AVERAGE_WINDOW = 10;
     private CANSparkMax pivotMotor;
-    private double targetUpperShooterRPM;
-    private double targetLowerShooterRPM;
 
     private CANSparkMax upperShooterMotor;
     private CANSparkMax lowerShooterMotor;
@@ -120,8 +118,8 @@ public class IntakeShooter extends SubsystemBase {
     }
 
     public void setShooterRPM(double upperRPM, double lowerRPM) {
-        this.targetUpperShooterRPM = upperRPM;
-        this.targetLowerShooterRPM = lowerRPM;
+        lowerShooterController.setSetpoint(lowerRPM);
+        upperShooterController.setSetpoint(upperRPM);
         IntakeShooter.shooterPIDEnabled = true;
     }
 
@@ -221,8 +219,8 @@ public class IntakeShooter extends SubsystemBase {
         }
 
         if (IntakeShooter.shooterPIDEnabled) {
-            double upperShooterControl = upperShooterController.calculate(upperShooterMotor.getEncoder().getVelocity(), targetUpperShooterRPM);
-            double lowerShooterControl = lowerShooterController.calculate(lowerShooterMotor.getEncoder().getVelocity(), targetLowerShooterRPM);
+            double upperShooterControl = upperShooterController.calculate(upperShooterMotor.getEncoder().getVelocity());
+            double lowerShooterControl = lowerShooterController.calculate(lowerShooterMotor.getEncoder().getVelocity());
             upperShooterMotor.set(upperShooterControl);
             lowerShooterMotor.set(lowerShooterControl);
         }
