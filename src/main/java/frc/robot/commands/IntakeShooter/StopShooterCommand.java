@@ -11,26 +11,25 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.IntakeShooter.IntakeShooter;
 import frc.robot.subsystems.utils.Enums.Position_Enums.IntakeShooterPositions;
 
-public class IntakeShooterPIDCommand extends Command {
+public class StopShooterCommand extends Command {
 
     double upperRPM;
+    Timer timer;
     double lowerRPM;
-
+    
 
     private  final IntakeShooter m_IntakeShooter;
-
-
-    public IntakeShooterPIDCommand(IntakeShooter m_IntakeShooter, double upperRPM, double lowerRPM) {
+    public StopShooterCommand(IntakeShooter m_IntakeShooter) {
         this.m_IntakeShooter = m_IntakeShooter;
-        this.upperRPM = upperRPM;
-        this.lowerRPM = lowerRPM;
+        m_IntakeShooter.stopShooter();
     }
 
     private void setShooterRPM(double upperRPM, double lowerRPM) 
     {   
         this.m_IntakeShooter.setShooterPIDEnabled(true);
         this.m_IntakeShooter.setShooterRPM(upperRPM, lowerRPM);
-        
+        timer = new Timer();
+        timer.reset();
     }
 
     @Override
@@ -41,19 +40,11 @@ public class IntakeShooterPIDCommand extends Command {
 
   @Override
     public void execute() {
-
-        
-            if (m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOT) {
-                setShooterRPM(upperRPM, lowerRPM);
-            }
-
-
-
     }
 
   @Override
    public boolean isFinished(){
-       return true;
+        return false;
    }
 
 

@@ -64,12 +64,12 @@ public class IntakeShooter extends SubsystemBase {
 
 
         pivotMotor = new CANSparkMax(IntakeShooterConstants.kIntakePivotMotor, MotorType.kBrushless);
+        
         lowerShooterMotor = new CANSparkMax(IntakeShooterConstants.kIntakeShooterLowerMotor, MotorType.kBrushless);
+        lowerShooterMotor.setInverted(true);
         upperShooterMotor = new CANSparkMax(IntakeShooterConstants.kIntakeShooterUpperMotor, MotorType.kBrushless);
+        upperShooterMotor.setInverted(true);
         stowMotor = new CANSparkMax(IntakeShooterConstants.kIntakeShooterStowMotor, MotorType.kBrushless);
-
-        upperShooterMotor.setInverted(false);
-        lowerShooterMotor.setInverted(false);
 
         pivotController = new PIDController(
             IntakeShooterConstants.kIntakePivotP,
@@ -121,6 +121,14 @@ public class IntakeShooter extends SubsystemBase {
         lowerShooterController.setSetpoint(lowerRPM);
         upperShooterController.setSetpoint(upperRPM);
         IntakeShooter.shooterPIDEnabled = true;
+    }
+
+    public void setShooterRPM(double upperRPM, double lowerRPM, double kpU, double kiU, double kdU, double kpL, double kiL, double kdL) {
+    lowerShooterController = new PIDController(kpU, kiU, kdU);
+    upperShooterController = new PIDController(kpL, kiL, kdL);
+    lowerShooterController.setSetpoint(lowerRPM);
+    upperShooterController.setSetpoint(upperRPM);
+    IntakeShooter.shooterPIDEnabled = true;
     }
 
     public void setShooterPIDEnabled(boolean enabled) {
@@ -185,12 +193,14 @@ public class IntakeShooter extends SubsystemBase {
     @Override
     public void periodic() {
 
-        SmartDashboard.putNumber("Pivot Encoder", pivotMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("Pivot Encoder", pivotMotor.getAbsoluteEncoder().getPosition());
         SmartDashboard.putNumber("Upper Shooter RPM", upperShooterMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Lower Shooter RPM", lowerShooterMotor.getEncoder().getVelocity());
         SmartDashboard.putNumber("Pivot Current", getAveragePivotCurrent());
         SmartDashboard.putBoolean("Pivot Stall", this.isStalling());
         SmartDashboard.putNumber("Position Num:", this.getPosition());
+        
+        
         
 
         if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.INTAKE)).getPosition()){
@@ -208,7 +218,7 @@ public class IntakeShooter extends SubsystemBase {
         updatePivotAverage();
 
         if(this.pivotPIDEnabled) {
-            double pivotControl = pivotController.calculate(pivotMotor.getEncoder().getPosition());
+            double pivotControl = pivotController.calculate(this.getPosition());
             if(pivotControl > 0.35) {
                 pivotControl = 0.35;
             }
@@ -221,8 +231,10 @@ public class IntakeShooter extends SubsystemBase {
         if (IntakeShooter.shooterPIDEnabled) {
             double upperShooterControl = upperShooterController.calculate(upperShooterMotor.getEncoder().getVelocity());
             double lowerShooterControl = lowerShooterController.calculate(lowerShooterMotor.getEncoder().getVelocity());
-            upperShooterMotor.set(upperShooterControl);
-            lowerShooterMotor.set(lowerShooterControl);
+            SmartDashboard.putNumber("LowerPower", lowerShooterControl);
+            SmartDashboard.putNumber("UpperPower", upperShooterControl);
+            upperShooterMotor.set(upperShooterControl + IntakeShooterConstants.kIntakeUpperShooterff);
+            lowerShooterMotor.set(lowerShooterControl + IntakeShooterConstants.kIntakeLowerShooterff);
         }
 
     }
@@ -236,17 +248,19 @@ public class IntakeShooter extends SubsystemBase {
     }
 
     public void stopShooter(){
-        lowerShooterMotor.set(0);
-        upperShooterMotor.set(0);
-        stowMotor.set(0);
+        this.setShooterPIDEnabled(false);
+        this.setIntakeShooterPower(0);
+        this.setIntakeStowPower(0);
+
     }
+
 
     public void setZeroPoint() {
         pivotMotor.getEncoder().setPosition(0);
     }
 
     public double getPosition(){
-        return pivotMotor.getEncoder().getPosition();
+        return pivotMotor.getAbsoluteEncoder().getPosition();
     }
     
     public void stopPivotMotorPower(){

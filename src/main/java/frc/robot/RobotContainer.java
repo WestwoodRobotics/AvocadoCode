@@ -107,7 +107,7 @@ public class RobotContainer {
 
   private driveTrajectoryAuton autonCommand;
 
-  private IntakeShooterCommandFactory intakeCommand;
+  private IntakeShooterCommandFactory intakeCommand = new IntakeShooterCommandFactory(m_intakeShooter);
 
 
 
@@ -128,10 +128,11 @@ public class RobotContainer {
     m_robotDrive.setDefaultCommand(new driveCommand(m_robotDrive, m_driverController));
     led.setDefaultCommand(new LEDCommand(led, beamBreak));
 
+
     //test.setDefaultCommand(new testCommand(test, m_driverController));
 
     autonCommand = new driveTrajectoryAuton(m_robotDrive);
-    intakeCommand = new IntakeShooterCommandFactory(m_intakeShooter);
+
     configureButtonBindings();
     // m_intakeModule.setDefaultCommand(new IntakeCommand(m_intakeModule, m_driverController, m_operatorController));
     // m_elevatorModule.setDefaultCommand(new ElevatorCommand(m_elevatorModule, m_driverController, m_operatorController));
@@ -163,18 +164,19 @@ public class RobotContainer {
 
     // reference for future command mapping
       //m_intakeShooter.setDefaultCommand(new InstantCommand(() -> m_intakeShooter.setIntakePivotPower(0)));
-      Command stowShootCommand = intakeCommand.launchStowMotorShoot();
-      Command inititateIntakeCommand  = intakeCommand.inititateIntake();
       Command holdPivotCommand = intakeCommand.holdIntakeShooter();
-      Command shooterStop = intakeCommand.stopShooter();
-      Command shooterCommand = new IntakeShooterPIDCommand(m_intakeShooter, 25, 5000);
-      Command shooterCommand1 = new IntakeShooterPIDCommand(m_intakeShooter, 0, 0);
+      Command shooterStop = new InstantCommand( () -> m_intakeShooter.stopShooter());
+      Command shooterCommand = new IntakeShooterPIDCommand(m_intakeShooter, 1, 4000);
+      //Command shooterStop = new IntakeShooterPIDCommand(m_intakeShooter, 0, 0, 12.5, 0, 0.00000259, 0);
+      Command stowShootCommand = intakeCommand.launchStowMotorShoot();
+      Command intakeShotoerIntakeCommand = new IntakeShooterPIDCommand(m_intakeShooter, -25, -4000);
       Command upPivotManual = intakeCommand.manualPivot(0.2);
       Command downPivotManual = intakeCommand.manualPivot(-0.2);
       Command IntakePosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.INTAKE));
       Command StowPosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.STOW));
       Command ShootPosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.SHOOT));
       Command powerControl1 = intakeCommand.setShooterPower(1.0);
+      
       
       dPadUp.onTrue(upPivotManual).onFalse(holdPivotCommand);
       dPadDown.onTrue(downPivotManual).onFalse(holdPivotCommand);
@@ -184,19 +186,24 @@ public class RobotContainer {
       xButton.onTrue(ShootPosition);
 
       // leftBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPosition(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotff)));
-      Command stopShooterCommand = intakeCommand.stopIntake();
+
 
       rightBumper.onTrue(
-        stowShootCommand
+        shooterCommand
       ).onFalse(shooterStop);
       leftBumper.onTrue(
-        inititateIntakeCommand
+        StowPosition
       );//.onFalse(shooterStop);
       
       Trigger rightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.75);
       rightTrigger.onTrue(
-        powerControl1
-      );//.onFalse(stopShooterCommand);
+        stowShootCommand
+      );//.onFalse(shooterStop);
+
+      Trigger leftTrigger = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.75);
+      leftTrigger.onTrue(
+        intakeShotoerIntakeCommand
+      );//.onFalse(shooterStop);
       
 
 
@@ -232,8 +239,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("ExamplePath");
-    return AutoBuilder.followPath(path);
+    // PathPlannerPath path = PathPlannerPath.fromPathFile("ExamplePathy");
+    // return AutoBuilder.followPath(path);
     //return autonCommand.getAutonomousCommand();
+    return new PathPlannerAuto("NewAutoy");
   }
 }

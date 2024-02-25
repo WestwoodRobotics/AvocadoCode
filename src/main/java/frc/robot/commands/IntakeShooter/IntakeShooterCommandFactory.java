@@ -24,6 +24,7 @@ public class IntakeShooterCommandFactory {
 
   public IntakeShooterCommandFactory(IntakeShooter m_IntakeShooter) {
     this.m_IntakeShooter = m_IntakeShooter;
+    
   }
 
   public Command setIntakeShooterPower(double power){
@@ -40,8 +41,10 @@ public class IntakeShooterCommandFactory {
   }
 
   public void holdIntakeShooterImpl(){
-    this.m_IntakeShooter.setIntakePivotPosition(m_IntakeShooter.getPosition());
     this.m_IntakeShooter.setPivotPIDEnabled(true);
+    System.out.println(m_IntakeShooter.getPosition());
+    this.m_IntakeShooter.setIntakePivotPosition(m_IntakeShooter.getPosition());
+
   }
   
   public Command holdIntakeShooter(){
@@ -73,9 +76,9 @@ public class IntakeShooterCommandFactory {
   }
 
   private void manualPivotImpl(double power) {
-
-    this.m_IntakeShooter.setIntakePivotPower(power);
     this.m_IntakeShooter.setPivotPIDEnabled(false);
+    this.m_IntakeShooter.setIntakePivotPower(power);
+
     if ((m_IntakeShooter.isStalling())){
       m_IntakeShooter.setZeroPoint();
       m_IntakeShooter.stopPivotMotorPower(); 

@@ -53,16 +53,16 @@ public final class Constants {
     // Angular offsets of the modules relative to the chassis in radians
     // These values are the angle offset of the wheels when the robot is facing forwards (Absolute Encoders)
     //DO NOT CHANGE THESE VALUES UNLESS YOU KNOW WHAT YOU'RE DOING!!
-    public static final double kFrontLeftChassisAngularOffset = Math.PI/2;
-    public static final double kFrontRightChassisAngularOffset = 0;
-    public static final double kRearLeftChassisAngularOffset = Math.PI;
-    public static final double kRearRightChassisAngularOffset = Math.PI/2;
+    public static final double kFrontLeftChassisAngularOffset = 3*Math.PI/2 - 0.05;
+    public static final double kFrontRightChassisAngularOffset = Math.PI;
+    public static final double kRearLeftChassisAngularOffset = 0;
+    public static final double kRearRightChassisAngularOffset =  3*Math.PI/2;
 
     // SPARK MAX CAN IDs
-    public static final int kFrontLeftDrivingCanId = 11;
+    public static final int kFrontLeftDrivingCanId = 15;
     public static final int kRearLeftDrivingCanId = 17;
     public static final int kFrontRightDrivingCanId = 13;
-    public static final int kRearRightDrivingCanId = 15;
+    public static final int kRearRightDrivingCanId = 11;
 
     public static final int kFrontLeftTurningCanId = 14;
     public static final int kRearLeftTurningCanId = 16;
@@ -76,10 +76,10 @@ public final class Constants {
 
   public static final class PortConstants{
         // SPARK MAX CAN IDs
-        public static final int kFrontLeftDrivingCanId = 11;
-        public static final int kRearLeftDrivingCanId = 13;
-        public static final int kFrontRightDrivingCanId = 15;
-        public static final int kRearRightDrivingCanId = 17;
+        public static final int kFrontLeftDrivingCanId = 15;
+        public static final int kRearLeftDrivingCanId = 17;
+        public static final int kFrontRightDrivingCanId = 13;
+        public static final int kRearRightDrivingCanId = 11;
     
         public static final int kFrontLeftTurningCanId = 14;
         public static final int kRearLeftTurningCanId = 16;
@@ -222,27 +222,34 @@ public final class Constants {
     public static final int kIntakePivotMotor = 23; //TODO: Change this value
 
     
-    public static final double kStowPosition = -1.123991;
-    public static final double kIntakePosition = -7.839963; //TODO: Change this value
-    public static final double kShootPosition = -4.286531;
+    public static final double kStowPosition = 2.834427;
+    public static final double kIntakePosition = -0.963421; //TODO: Change this value
+    public static final double kShootPosition = 1.968733;
     
     public static double kIntakePivotStowPosition = 0;
     public static double kIntakePivotEngagePosition = 0;
 
+    public static double kIntakePivotP = 1;
+    public static double kIntakePivotI = 0;
+    public static double kIntakePivotD = 0;
+    public static double kIntakePivotff = 0;
 
-
-    public static double kIntakePivotP = 0.5;
-    public static double kIntakePivotI = 0.5;
-    public static double kIntakePivotD = 0.01;
-
-    public static double kIntakeUpperShooterP = 1000;
-    public static double kIntakeUpperShooterI = 0;
+    public static double kIntakeUpperShooterP = 75;
+    public static double kIntakeUpperShooterI = 0.01;
     public static double kIntakeUpperShooterD = 0;
+    public static double kIntakeUpperShooterff = 50;
 
-    public static double kIntakeLowerShooterP = 100;
-    public static double kIntakeLowerShooterI = 0.1;
-    public static double kIntakeLowerShooterD =0;
+    // public static double kIntakeUpperShooterP = 0;
+    // public static double kIntakeUpperShooterI = 0;
+    // public static double kIntakeUpperShooterD = 0;
+    // public static double kIntakeUpperShooterff = 0;
+
+    public static double kIntakeLowerShooterP = 0.000259;
+    public static double kIntakeLowerShooterI = 0.0002;
+    public static double kIntakeLowerShooterD = 0.00000997;
+    public static double kIntakeLowerShooterff = 0.734;
   }
+
   public static final class ArmConstants{
     public static final int kArmMotor = 21;
 
