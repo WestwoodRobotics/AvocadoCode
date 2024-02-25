@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.GenericHID.*;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.OIConstants;
@@ -11,7 +12,7 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import edu.wpi.first.wpilibj.XboxController;
 
 
-public class driveCommand extends CommandBase {
+public class driveCommand extends Command {
 
   private final SwerveDrive m_swerveDrive;
   private XboxController controller;
