@@ -1,56 +1,39 @@
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu
+ARG UBUNTU=22.04
+#ARG TYPE=base
 
-RUN apt update -y
-RUN apt install sudo -y
+# FROM wpilib/ubuntu-${TYPE}:${UBUNTU}
 
-RUN sudo apt install -y curl wget
-RUN sudo apt install -y zip unzip
+# # Create a user named OrangeDynamite
+# RUN useradd -ms /bin/bash OrangeDynamite
 
+# # Add OrangeDynamite to the sudo group
+# RUN usermod -aG sudo OrangeDynamite
 
-# Install OpenJDK 17
-RUN sudo apt-get update && \
-    sudo apt-get install -y openjdk-17-jdk && \
-    sudo apt-get clean;
+# # Set password for the user
+# RUN echo "OrangeDynamite:2583" | chpasswd
 
-# Confirm Java version
-RUN java -version
+# # Install toolchain
+# RUN curl -SL https://github.com/wpilibsuite/opensdk/releases/download/v2024-1/cortexa9_vfpv3-roborio-academic-2024-x86_64-linux-gnu-Toolchain-12.1.0.tgz | sh -c 'mkdir -p /usr/local && cd /usr/local && tar xzf - --strip-components=2'
 
-# Define environment variable for Gradle
-ENV GRADLE_VERSION=7.6.4 \
-    GRADLE_HOME=/opt/gradle \
-    PATH=${GRADLE_HOME}/bin:${PATH}
+# USER OrangeDynamite
+# WORKDIR /home/OrangeDynamite
 
-# Install Gradle
-RUN wget -q -O gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" && \
-    sudo unzip gradle.zip -d /opt && \
-    sudo ln -s /opt/gradle-${GRADLE_VERSION} /opt/gradle && \
-    rm gradle.zip
+# # Change the shell prompt
+# RUN echo 'PS1="OrangeDynamite@FRC-2024:\w\$ "' >> ~/.bashrc
 
-# Set the JAVA_HOME environment variable
-ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk-amd64
+FROM mcr.microsoft.com/devcontainers/typescript-node:18-bookworm
 
-# Add the JAVA_HOME bin directory to the PATH
-ENV PATH $JAVA_HOME/bin:$PATH
+RUN git config --system codespaces-theme.hide-status 1
+
+RUN wget https://packages.wpilib.workers.dev/installer/v2024.3.1/Linux/WPILib_Linux-2024.3.1.tar.gz
+RUN tar -xzvf WPILib_Linux-2024.3.1.tar.gz
+RUN cd WPILib_Linux-2024.3.1
 
 
-# Create a user named OrangeDynamite
-RUN useradd -ms /bin/bash OrangeDynamite
+USER node
+RUN npm install -g node-gyp
+RUN YARN_CACHE="$(yarn cache dir)" && rm -rf "$YARN_CACHE" && ln -s /vscode-dev/yarn-cache "$YARN_CACHE"
+RUN echo 'export DISPLAY="${DISPLAY:-:1}"' | tee -a ~/.bashrc >> ~/.zshrc
 
-# Add OrangeDynamite to the sudo group
-RUN usermod -aG sudo OrangeDynamite
-
-# Set password for the user
-RUN echo "OrangeDynamite:2583" | chpasswd
-
-# Install toolchain
-RUN curl -SL https://github.com/wpilibsuite/opensdk/releases/download/v2024-1/cortexa9_vfpv3-roborio-academic-2024-x86_64-linux-gnu-Toolchain-12.1.0.tgz | sh -c 'mkdir -p /usr/local && cd /usr/local && tar xzf - --strip-components=2'
-
-USER OrangeDynamite
-WORKDIR /home/OrangeDynamite
-
-RUN wget https://github.com/wpilibsuite/allwpilib/archive/refs/tags/v2024.2.1.tar.gz -O wpilib.tar.gz
-# Change the shell prompt
-RUN sudo echo 'PS1="OrangeDynamite@Apricot_Code:\w\$ "' >> ~/.bashrc
-RUN sudo mkdir -p /OrangeDynamite/wpilib/2024
-RUN sudo tar -zxvf wpilib.tar.gz -C /OrangeDynamite/wpilib/2024
-
+USER root
+CMD chown node:node /vscode-dev && sudo -u node mkdir -p /vscode-dev/yarn-cache && sleep inf
