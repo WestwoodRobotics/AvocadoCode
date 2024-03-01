@@ -119,11 +119,18 @@ public class IntakeShooterCommandFactory {
         m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.INTAKE));
         return command;
       }
-      case SHOOT:
+      case SHOOTCLOSE:
       {
-        InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kShootPosition));
+        InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kShootSpeakerBasePosition));
         command.addRequirements(this.m_IntakeShooter);
-        m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.SHOOT));
+        m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.SHOOTCLOSE));
+        return command;
+      }
+      case SHOOTFAR:
+      {
+        InstantCommand command = new InstantCommand(() -> setPivotPositionImpl(IntakeShooterConstants.kShootNoteLinePosition));
+        command.addRequirements(this.m_IntakeShooter);
+        m_IntakeShooter.setIntakeShooterState(new IntakeShooterState(IntakeShooterPositions.SHOOTFAR));
         return command;
       }
       default:
@@ -188,18 +195,21 @@ public class IntakeShooterCommandFactory {
   }
 
   public void launchStowMotorShootImpl(){
-    this.m_IntakeShooter.setIntakeStowPower(1.0);
+    this.m_IntakeShooter.setIntakeStowPower(-1.0);
+    System.out.println("lollll stow going brrrr");
   }
 
   public Command launchStowMotorShoot(){
-    if ((m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOT)){
+    // if ((m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOT)){
+
+    // } else {
+    //   System.out.println("Intake Shooter must be in shoot position to run the stow motor");
+    //   return new InstantCommand();
+    // }
+
       InstantCommand command = new InstantCommand(() -> launchStowMotorShootImpl());
       command.addRequirements(this.m_IntakeShooter);
       return command;
-    } else {
-      System.out.println("Intake Shooter must be in shoot position to run the stow motor");
-      return new InstantCommand();
-    }
 
   }
   
@@ -222,4 +232,5 @@ public class IntakeShooterCommandFactory {
   //   Command command = new InstantCommand(() -> m_IntakeShooter.setIntakePivotPosition(IntakeShooterPositions.ENGAGE, IntakeShooterConstants.kIntakePivotff), m_IntakeShooter);
   //   return command;
   // }
+
 }

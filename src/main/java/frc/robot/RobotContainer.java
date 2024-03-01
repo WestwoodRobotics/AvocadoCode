@@ -12,6 +12,9 @@ import java.util.List;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -29,7 +32,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -158,24 +161,26 @@ public class RobotContainer {
    
     // review button mapping
 
-    aButton.whileTrue(new InstantCommand(
+    /*aButton.whileTrue(new InstantCommand(
             () -> m_robotDrive.resetGyro(),
-            m_robotDrive));
+            m_robotDrive));*/
 
     // reference for future command mapping
       //m_intakeShooter.setDefaultCommand(new InstantCommand(() -> m_intakeShooter.setIntakePivotPower(0)));
       Command holdPivotCommand = intakeCommand.holdIntakeShooter();
       Command shooterStop = new InstantCommand( () -> m_intakeShooter.stopShooter());
+      Command stowStop = new InstantCommand( () -> m_intakeShooter.stopStow());
       Command shooterCommand = new IntakeShooterPIDCommand(m_intakeShooter, 1, 4000);
       //Command shooterStop = new IntakeShooterPIDCommand(m_intakeShooter, 0, 0, 12.5, 0, 0.00000259, 0);
       Command stowShootCommand = intakeCommand.launchStowMotorShoot();
-      Command intakeShotoerIntakeCommand = new IntakeShooterPIDCommand(m_intakeShooter, -25, -4000);
+      Command intakeShotoerIntakeCommand = new IntakeShooterPIDCommand(m_intakeShooter, 25, 4000);
       Command upPivotManual = intakeCommand.manualPivot(0.2);
       Command downPivotManual = intakeCommand.manualPivot(-0.2);
       Command IntakePosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.INTAKE));
       Command StowPosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.STOW));
-      Command ShootPosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.SHOOT));
-      Command powerControl1 = intakeCommand.setShooterPower(1.0);
+      Command ShootClosePosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.SHOOTCLOSE));
+      Command ShootFarPosition = intakeCommand.setPivotPosition(new IntakeShooterState(IntakeShooterPositions.SHOOTFAR));
+      Command powerControl1 = intakeCommand.setShooterPower(-1.0);
       
       
       dPadUp.onTrue(upPivotManual).onFalse(holdPivotCommand);
@@ -183,7 +188,8 @@ public class RobotContainer {
 
       bButton.onTrue(IntakePosition);
       yButton.onTrue(StowPosition);
-      xButton.onTrue(ShootPosition);
+      xButton.onTrue(ShootClosePosition);
+      aButton.onTrue(ShootFarPosition);
 
       // leftBumper.onTrue(new InstantCommand(() -> m_intakeShooter.setIntakePivotPosition(IntakeShooterPositions.STOW, IntakeShooterConstants.kIntakePivotff)));
 
@@ -191,19 +197,23 @@ public class RobotContainer {
       rightBumper.onTrue(
         shooterCommand
       ).onFalse(shooterStop);
-      leftBumper.onTrue(
-        StowPosition
-      );//.onFalse(shooterStop);
+      leftBumper.whileTrue(new InstantCommand(
+            () -> m_robotDrive.resetGyro(),
+            m_robotDrive));//.onFalse(shooterStop);
       
       Trigger rightTrigger = new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.75);
       rightTrigger.onTrue(
         stowShootCommand
-      );//.onFalse(shooterStop);
+      ).onFalse(stowStop);
 
       Trigger leftTrigger = new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.75);
       leftTrigger.onTrue(
-        intakeShotoerIntakeCommand
-      );//.onFalse(shooterStop);
+        new InstantCommand ( () -> m_intakeShooter.setShooterRPM(25, 5000))
+      ).onFalse(shooterStop);
+
+      // leftTrigger.onTrue(
+      //   new InstantCommand (() -> m_intakeShooter.setShooterRPM(25, 4000))
+      // ).onFalse(shooterStop);
       
 
 
@@ -239,9 +249,11 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // PathPlannerPath path = PathPlannerPath.fromPathFile("ExamplePathy");
-    // return AutoBuilder.followPath(path);
+    PathPlannerPath path = PathPlannerPath.fromPathFile("Curvy");
+    PathPlannerPath path2 = PathPlannerPath.fromPathFile("Curvy2");
+    m_robotDrive.resetPose(new Pose2d(0.5, 2.0, Rotation2d.fromDegrees(0)));
+    return AutoBuilder.followPath(path).andThen(new InstantCommand(() -> m_intakeShooter.setIntakeShooterPower(0.5))).andThen(AutoBuilder.followPath(path2));
     //return autonCommand.getAutonomousCommand();
-    return new PathPlannerAuto("NewAutoy");
+    //return new PathPlanner
   }
 }

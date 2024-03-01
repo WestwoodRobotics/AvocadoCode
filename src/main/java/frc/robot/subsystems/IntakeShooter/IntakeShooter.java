@@ -206,8 +206,11 @@ public class IntakeShooter extends SubsystemBase {
         if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.INTAKE)).getPosition()){
             SmartDashboard.putString("State:", "Intake");
         }
-        else if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.SHOOT)).getPosition()){
-            SmartDashboard.putString("State:", "Shoot");
+        else if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.SHOOTCLOSE)).getPosition()){
+            SmartDashboard.putString("State:", "Shoot Close");
+        }
+        else if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.SHOOTFAR)).getPosition()){
+            SmartDashboard.putString("State:", "Shoot Far");
         }
         else if (intakeShooterState.getPosition() == (new IntakeShooterState(IntakeShooterPositions.STOW)).getPosition()){
             SmartDashboard.putString("State:", "Stow");
@@ -251,9 +254,11 @@ public class IntakeShooter extends SubsystemBase {
         this.setShooterPIDEnabled(false);
         this.setIntakeShooterPower(0);
         this.setIntakeStowPower(0);
-
     }
 
+    public void stopStow(){
+        this.setIntakeStowPower(0);
+    }
 
     public void setZeroPoint() {
         pivotMotor.getEncoder().setPosition(0);

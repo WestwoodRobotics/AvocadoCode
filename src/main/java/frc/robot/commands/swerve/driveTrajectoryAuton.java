@@ -40,7 +40,7 @@ public class driveTrajectoryAuton extends Command {
     neoTrajectory.addWaypoint(0, 0, 0);
     
     // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(neoTrajectory.getStartingWaypointInitialPose());
+    m_robotDrive.resetPose(neoTrajectory.getStartingWaypointInitialPose());
 
     // Run path following command, then stop at the end.
     return neoTrajectory.generateCommand(m_robotDrive).

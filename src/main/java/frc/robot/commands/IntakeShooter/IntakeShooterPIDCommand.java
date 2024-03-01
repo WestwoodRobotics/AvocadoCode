@@ -43,7 +43,7 @@ public class IntakeShooterPIDCommand extends Command {
     public void execute() {
 
         
-            if (m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOT) {
+            if ((m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOTCLOSE) || (m_IntakeShooter.getState().getPosition() == IntakeShooterPositions.SHOOTFAR) ) {
                 setShooterRPM(upperRPM, lowerRPM);
             }
 

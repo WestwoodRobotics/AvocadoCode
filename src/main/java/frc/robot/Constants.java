@@ -222,9 +222,10 @@ public final class Constants {
     public static final int kIntakePivotMotor = 23; //TODO: Change this value
 
     
-    public static final double kStowPosition = 2.834427;
+    public static final double kStowPosition = 0.568648;
     public static final double kIntakePosition = -0.963421; //TODO: Change this value
-    public static final double kShootPosition = 1.968733;
+    public static final double kShootSpeakerBasePosition = 1.968733; //TODO: Change this value
+    public static final double kShootNoteLinePosition = 0; //TODO: Change this value
     
     public static double kIntakePivotStowPosition = 0;
     public static double kIntakePivotEngagePosition = 0;
@@ -234,20 +235,20 @@ public final class Constants {
     public static double kIntakePivotD = 0;
     public static double kIntakePivotff = 0;
 
-    public static double kIntakeUpperShooterP = 75;
-    public static double kIntakeUpperShooterI = 0.01;
+    public static double kIntakeUpperShooterP = 0.08;
+    public static double kIntakeUpperShooterI = 0.00;
     public static double kIntakeUpperShooterD = 0;
-    public static double kIntakeUpperShooterff = 50;
+    public static double kIntakeUpperShooterff = 0.9;
 
     // public static double kIntakeUpperShooterP = 0;
     // public static double kIntakeUpperShooterI = 0;
     // public static double kIntakeUpperShooterD = 0;
     // public static double kIntakeUpperShooterff = 0;
 
-    public static double kIntakeLowerShooterP = 0.000259;
-    public static double kIntakeLowerShooterI = 0.0002;
-    public static double kIntakeLowerShooterD = 0.00000997;
-    public static double kIntakeLowerShooterff = 0.734;
+    public static double kIntakeLowerShooterP = 0.00035;
+    public static double kIntakeLowerShooterI = 0.00000;
+    public static double kIntakeLowerShooterD = 0.00000;
+    public static double kIntakeLowerShooterff = 0.9;
   }
 
   public static final class ArmConstants{

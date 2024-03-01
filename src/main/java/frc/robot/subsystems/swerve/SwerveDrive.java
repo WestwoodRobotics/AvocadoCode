@@ -122,8 +122,8 @@ public class SwerveDrive extends SubsystemBase {
       this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
       this::driveChassisSpeeds, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
       new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-              new PIDConstants(ModuleConstants.kDrivingP+3, ModuleConstants.kDrivingI+1, ModuleConstants.kDrivingD), // Translation PID constants
-              new PIDConstants(ModuleConstants.kTurningP+6, ModuleConstants.kTurningI, ModuleConstants.kTurningD), // Rotation PID constants
+              new PIDConstants(3, 0.0, 0), // Translation PID constants
+              new PIDConstants(2, 0.0, 0), // Rotation PID constants
               4.5, // Max module speed, in m/s
               0.4, // Drive base radius in meters. Distance from robot center to furthest module.
               new ReplanningConfig() // Default path replanning config. See the API for the options here
@@ -158,6 +158,12 @@ public class SwerveDrive extends SubsystemBase {
     SmartDashboard.putNumber("Z Gyro Angle", gyro.getZAngle());
     SmartDashboard.putNumber("X Gyro Angle", gyro.getXAngle());
     SmartDashboard.putNumber("Y Gyro Angle", gyro.getYAngle());
+    double xy_p = SmartDashboard.getNumber("XY P", 5);
+    double xy_i = SmartDashboard.getNumber("XY I", 0);
+
+    double r_p = SmartDashboard.getNumber("Rot P", 5);
+    double r_i = SmartDashboard.getNumber("Rot I", 0);
+    
     m_field.setRobotPose(getPose());
 
   }
@@ -178,23 +184,6 @@ public class SwerveDrive extends SubsystemBase {
     } else {
       System.out.println("Warning: Gyro not responding. Skipping gyro reset.");
     }
-  }
-
-  /**
-   * Resets the odometry to the specified pose.
-   *
-   * @param pose The pose to which to set the odometry.
-   */
-  public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(
-        this.getHeadingObject(),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        },
-        pose);
   }
 
   /**
